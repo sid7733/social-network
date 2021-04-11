@@ -1,7 +1,14 @@
 import profileReducer, {addPostActionCreator, updateNewPostTextActionCreator} from "./profile-reducer";
 import dialogsReducer, {sendMessageCreator, updateNewMessageBodyCreator} from "./dialogs-reducer";
 import sidebarReducer from "./sidebar-reducer";
-import {followAC, setUsersAC, unfollowAC} from "./users-reducer";
+import {
+    followAC,
+    setCurrentPageAC,
+    setTotalUsersCountAC,
+    setUsersAC,
+    toggleIsFetchingAC,
+    unfollowAC
+} from "./users-reducer";
 
 export type StoreType = {
     _state: RootStateType
@@ -53,7 +60,10 @@ export type ActionType = ReturnType<typeof addPostActionCreator> |
     ReturnType<typeof updateNewMessageBodyCreator> |
     ReturnType<typeof followAC> |
     ReturnType<typeof unfollowAC> |
-    ReturnType<typeof setUsersAC>
+    ReturnType<typeof setUsersAC> |
+    ReturnType<typeof setCurrentPageAC> |
+    ReturnType<typeof setTotalUsersCountAC>|
+    ReturnType<typeof toggleIsFetchingAC>
 
 
 export const store: StoreType = {
@@ -108,4 +118,4 @@ export const store: StoreType = {
 }
 
 // @ts-ignore
-    window.store = store
+window.store = store
