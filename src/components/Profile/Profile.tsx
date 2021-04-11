@@ -15,20 +15,9 @@ const Profile = (props: ProfilePropsType) => {
 
     return (
         <div>
-            <ProfileInfo/>
-            <MyPostsContainer
-                // store={store}
-                // posts={props.profilePage.posts}
-                // newPostText={props.profilePage.newPostText}
-                // dispatch={props.dispatch}
-            />
+            <ProfileInfo profile={props.profile}/>
+            <MyPostsContainer/>
 
-
-
-            {/*<MyPosts posts={props.profilePage.posts}*/}
-            {/*         newPostText={props.profilePage.newPostText}*/}
-            {/*         dispatch={props.dispatch}*/}
-            {/*/>*/}
         </div>
     );
 }

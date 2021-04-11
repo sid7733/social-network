@@ -1,7 +1,8 @@
 import {ActionType} from "./store";
 
-const ADD_POST = 'ADD-POST';
-const UPDATE_NEW_POST_TEXT = 'UPDATE-NEW-POST-TEXT';
+const ADD_POST = 'ADD_POST';
+const UPDATE_NEW_POST_TEXT = 'UPDATE_NEW_POST_TEXT';
+const SET_USER_PROFILE='SET_USER_PROFILE'
 
 export type PostType = {
     id: number,
@@ -18,6 +19,7 @@ const initialState = {
         {id: 5, message: 'It\'s my fourth post', likesCount: 3}
     ],
     newPostText: '',
+    profile: null
 }
 
 export type InitialStateType = typeof initialState
@@ -43,18 +45,20 @@ const profileReducer = (state:InitialStateType = initialState, action: ActionTyp
                 newPostText: action.newText
             }
         }
+        case SET_USER_PROFILE:{
+            return {
+                ...state,
+                profile: action.profile
+            }
+        }
+
         default:
             return state
     }
 }
 
-export const addPostActionCreator = () => ({
-    type: ADD_POST
-}) as const
-
-export const updateNewPostTextActionCreator = (text: string) => ({
-    type: UPDATE_NEW_POST_TEXT,
-    newText: text
-}) as const
+export const addPost = () => ({ type: ADD_POST}) as const
+export const updateNewPostText = (text: string) => ({type: UPDATE_NEW_POST_TEXT, newText: text}) as const
+export const setUserProfile = (profile: {}) => ({type: SET_USER_PROFILE, profile}) as const
 
 export default profileReducer
