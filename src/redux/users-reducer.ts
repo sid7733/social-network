@@ -1,5 +1,6 @@
 import {ActionType} from "./store";
 import axios from "axios";
+import {usersAPI} from "../api/api";
 
 export type UserType = {
     id: number
@@ -33,8 +34,8 @@ const initialState: InitialStateType = {
     followingInProgress: []
 }
 
-const FOLLOW = 'FOLLOW'
-const UNFOLLOW = 'UNFOLLOW'
+const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS'
+const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS'
 const SET_USERS = 'SET_USERS'
 const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
 const SET_TOTAL_USERS_COUNT = 'SET_TOTAL_USERS_COUNT'
@@ -43,7 +44,7 @@ const TOGGLE_IS_FOLLOWING_PROGRESS = 'TOGGLE_IS_FOLLOWING_PROGRESS'
 
 const usersReducer = (state = initialState, action: ActionType): InitialStateType => {
     switch (action.type) {
-        case FOLLOW:
+        case FOLLOW_SUCCESS:
             return {
                 ...state,
                 users: state.users.map(u => {
@@ -53,7 +54,7 @@ const usersReducer = (state = initialState, action: ActionType): InitialStateTyp
                     return u
                 })
             }
-        case UNFOLLOW:
+        case UNFOLLOW_SUCCESS:
             return {
                 ...state,
                 users: state.users.map(u => {
@@ -96,8 +97,8 @@ const usersReducer = (state = initialState, action: ActionType): InitialStateTyp
     }
 }
 
-export const follow = (userId: number) => ({type: FOLLOW, userId}) as const
-export const unfollow = (userId: number) => ({type: UNFOLLOW, userId}) as const
+export const followSuccess = (userId: number) => ({type: FOLLOW_SUCCESS, userId}) as const
+export const unfollowSuccess = (userId: number) => ({type: UNFOLLOW_SUCCESS, userId}) as const
 export const setUsers = (users: Array<UserType>) => ({type: SET_USERS, users}) as const
 export const setCurrentPage = (currentPage: number) => ({type: SET_CURRENT_PAGE, currentPage}) as const
 export const setTotalUsersCount = (totalUsersCount: number) => ({type: SET_CURRENT_PAGE, totalUsersCount}) as const
@@ -115,6 +116,35 @@ export const getUsers = (currentPage: number, pageSize: number ) => {
                 dispatch(setUsers(data.items))
                 dispatch(setTotalUsersCount(data.totalUsersCount))
             })
+    }
+}
+
+export const follow = (userId: number) => {
+    return (dispatch) => {
+        dispatch(toggleFollowingProgress(true, userId))
+        usersAPI.follow(userId)
+            .then(response => {
+                if (response.data.resultCode==0){
+                    dispatch(followSuccess(userId))
+                }
+                dispatch(toggleFollowingProgress(false, userId))
+            })
+
+    }
+}
+
+
+export const unfollow = (userId: number) => {
+    return (dispatch) => {
+        dispatch(toggleFollowingProgress(true, userId))
+        usersAPI.unfollow(userId)
+            .then(response => {
+                if (response.data.resultCode==0){
+                    dispatch(unfollowSuccess(userId))
+                }
+                dispatch(toggleFollowingProgress(false, userId))
+            })
+
     }
 }
 
