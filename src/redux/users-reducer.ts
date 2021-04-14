@@ -1,6 +1,7 @@
 import {ActionType} from "./store";
+import axios from "axios";
 
-export type UserType={
+export type UserType = {
     id: number
     photoUrl: string
     followed: boolean
@@ -9,7 +10,7 @@ export type UserType={
     location: UserLocationType
 }
 
-export type UserLocationType= {
+export type UserLocationType = {
     country: string
     city: string
 }
@@ -20,14 +21,16 @@ export type InitialStateType = {
     totalUsersCount: number
     currentPage: number
     isFetching: boolean
+    followingInProgress: Array<number>
 }
 
 const initialState: InitialStateType = {
-    users:  [ ],
+    users: [],
     pageSize: 5,
     totalUsersCount: 0,
     currentPage: 1,
-    isFetching: false
+    isFetching: true,
+    followingInProgress: []
 }
 
 const FOLLOW = 'FOLLOW'
@@ -36,6 +39,7 @@ const SET_USERS = 'SET_USERS'
 const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
 const SET_TOTAL_USERS_COUNT = 'SET_TOTAL_USERS_COUNT'
 const TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING'
+const TOGGLE_IS_FOLLOWING_PROGRESS = 'TOGGLE_IS_FOLLOWING_PROGRESS'
 
 const usersReducer = (state = initialState, action: ActionType): InitialStateType => {
     switch (action.type) {
@@ -60,12 +64,12 @@ const usersReducer = (state = initialState, action: ActionType): InitialStateTyp
                 })
             }
         case SET_USERS:
-           return{
-               ...state,
-               users:  action.users
-           }
-        case SET_CURRENT_PAGE:{
-            return{
+            return {
+                ...state,
+                users: action.users
+            }
+        case SET_CURRENT_PAGE: {
+            return {
                 ...state,
                 currentPage: action.currentPage
             }
@@ -80,6 +84,13 @@ const usersReducer = (state = initialState, action: ActionType): InitialStateTyp
                 ...state,
                 isFetching: action.isFetching
             }
+        case TOGGLE_IS_FOLLOWING_PROGRESS:
+            return {
+                ...state,
+                followingInProgress: action.isFetching
+                    ? [...state.followingInProgress, action.userId]
+                    : state.followingInProgress.filter(id=>id != action.userId)
+            }
         default:
             return state
     }
@@ -91,7 +102,20 @@ export const setUsers = (users: Array<UserType>) => ({type: SET_USERS, users}) a
 export const setCurrentPage = (currentPage: number) => ({type: SET_CURRENT_PAGE, currentPage}) as const
 export const setTotalUsersCount = (totalUsersCount: number) => ({type: SET_CURRENT_PAGE, totalUsersCount}) as const
 export const toggleIsFetching = (isFetching: boolean) => ({type: TOGGLE_IS_FETCHING, isFetching}) as const
+export const toggleFollowingProgress = (isFetching: boolean, userId: number) => ({type: TOGGLE_IS_FOLLOWING_PROGRESS, isFetching, userId}) as const
 
+//thunk
+export const getUsers = (currentPage: number, pageSize: number ) => {
+    return (dispatch) => {
+        dispatch(toggleIsFetching(true))
 
+        usersAPI.getUsers(currentPage, pageSize)
+            .then(data => {
+                dispatch(toggleIsFetching(false))
+                dispatch(setUsers(data.items))
+                dispatch(setTotalUsersCount(data.totalUsersCount))
+            })
+    }
+}
 
-export default usersReducer
+    export default usersReducer
