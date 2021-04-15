@@ -1,8 +1,11 @@
-import {ActionType} from "./store";
+import {setAuthUserData} from "./auth-reducer";
+
 
 const initialState={}
 
-const sidebarReducer=(state: any=initialState,action: ActionType)=>{
+export type SidebarActionType = ReturnType<typeof setAuthUserData>  //need to fix
+
+const sidebarReducer=(state: any=initialState,action: SidebarActionType)=>{
 
 
     return state

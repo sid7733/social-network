@@ -2,8 +2,13 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import s from './Header.module.css';
 
+type HeaderPropsType={
+    isAuth: boolean
+    login: string | null
+    getAuthUserData: ()=>void
+}
 
-const Header = (props) => {
+const Header = (props: HeaderPropsType) => {
     return (
         <header className={s.header}>
             <img src='https://go.imgsmail.ru/imgpreview?key=28651f27816ee8f0&mb=imgdb_preview_exp'/>

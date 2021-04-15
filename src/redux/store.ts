@@ -1,16 +1,10 @@
+// @ts-ignore
 import profileReducer, {addPostActionCreator, updateNewPostTextActionCreator} from "./profile-reducer";
 import dialogsReducer, {sendMessageCreator, updateNewMessageBodyCreator} from "./dialogs-reducer";
 import sidebarReducer from "./sidebar-reducer";
-import {
-    followAC,
-    setCurrentPageAC,
-    setTotalUsersCountAC,
-    setUsersAC,
-    toggleIsFetchingAC,
-    unfollowAC
-} from "./users-reducer";
 
-export type StoreType = {
+
+ type StoreType = {
     _state: RootStateType
     _callSubscriber: (state: RootStateType) => void
     getState: () => RootStateType
@@ -35,38 +29,38 @@ type PostType = {
     likesCount: number
 }
 
-export type DialogsPageType = {
+ type DialogsPageType = {
     dialogs: Array<DialogType>,
     messages: Array<MessageType>,
     newMessageBody: string
 }
 
-export type ProfilePageType = {
+ type ProfilePageType = {
     posts: Array<PostType>
     newPostText: string
 }
 
-export type SidebarType = {}
+ type SidebarType = {}
 
-export type RootStateType = {
+ type RootStateType = {
     profilePage: ProfilePageType,
     dialogsPage: DialogsPageType,
     sidebar: SidebarType
 }
 
-export type ActionType = ReturnType<typeof addPostActionCreator> |
+ type ActionType = ReturnType<typeof addPostActionCreator> |
     ReturnType<typeof updateNewPostTextActionCreator> |
     ReturnType<typeof sendMessageCreator> |
-    ReturnType<typeof updateNewMessageBodyCreator> |
-    ReturnType<typeof followAC> |
-    ReturnType<typeof unfollowAC> |
-    ReturnType<typeof setUsersAC> |
-    ReturnType<typeof setCurrentPageAC> |
-    ReturnType<typeof setTotalUsersCountAC>|
-    ReturnType<typeof toggleIsFetchingAC>
+    ReturnType<typeof updateNewMessageBodyCreator>
+    // ReturnType<typeof followAC> |
+    // ReturnType<typeof unfollowAC> |
+    // ReturnType<typeof setUsersAC> |
+    // ReturnType<typeof setCurrentPageAC> |
+    // ReturnType<typeof setTotalUsersCountAC>|
+    // ReturnType<typeof toggleIsFetchingAC>
 
-
-export const store: StoreType = {
+// @ts-ignore
+ const store: StoreType = {
     _state: {
         profilePage: {
             posts: [
@@ -108,8 +102,9 @@ export const store: StoreType = {
     subscribe(callback: () => void) {
         this._callSubscriber = callback    // pattern observer
     },
-
+// @ts-ignore
     dispatch(action) {
+        // @ts-ignore
         this._state.profilePage = profileReducer(this._state.profilePage, action)
         this._state.dialogsPage = dialogsReducer(this._state.dialogsPage, action)
         this._state.sidebar = sidebarReducer(this._state.sidebar, action)

@@ -2,13 +2,21 @@ import styles from "./users.module.css";
 import userPhoto from "../../assets/images/user.png";
 import React from "react";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
-import {toggleFollowingProgress} from "../../redux/users-reducer";
-import {usersAPI} from "../../api/api";
+import {InitialStateType} from "../../redux/users-reducer";
+
+type UsersProps = {
+    usersPage: InitialStateType
+    follow: (userId: number) => void
+    unfollow: (userId: number) => void
+    onPageChanged: (pageNumber: number) => void
+    toggleFollowingProgress:(isFetching: boolean, userId: number)=>void
+}
 
 
-export const Users = (props) => {
-    let pagesCount = Math.ceil(props.totalUsersCount / props.pageSize)
+export const Users = (props:UsersProps) => {
+    let state = props.usersPage
+
+    let pagesCount = Math.ceil(state.totalUsersCount / state.pageSize)
 
     let pages = []
     for (let i = 1; i <= pagesCount; i++) {
@@ -17,16 +25,13 @@ export const Users = (props) => {
     return <div>
         <div>
             {pages.map(p => {
-                return <span
-                    className={props.currentPage === p && styles.selectedPage}
+                return <span className={state.currentPage === p ? styles.selectedPage: ''}
                     onClick={(e) => {
                         props.onPageChanged(p)
                     }}>{p}</span>
             })}
         </div>
-        {/*<button onClick={getUsers}>Get Users</button>*/}
-        {
-            props.usersPage.users.map(u => <div key={u.id}>
+        { props.usersPage.users.map(u => <div key={u.id}>
                 <span>
                     <div>
                         <NavLink to = {'/profile' + u.id}>
@@ -35,9 +40,9 @@ export const Users = (props) => {
                         </div>
                     <div>
                         {u.followed
-                            ? <button disabled={props.followingInProgress.some(id =>id===u.id)}
+                            ? <button disabled={state.followingInProgress.some(id =>id===u.id)}
                                       onClick={() => {props.unfollow( u.id)}}>Unfollow </button>
-                            : <button disabled={props.followingInProgress.some(id=>id===u.id)}
+                            : <button disabled={state.followingInProgress.some(id=>id===u.id)}
                                       onClick={() => {props.follow( u.id)}}>Follow</button>}
 
                     </div>
