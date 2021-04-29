@@ -6,6 +6,7 @@ import {InitialStateType} from "../../redux/users-reducer";
 
 type UsersProps = {
     usersPage: InitialStateType
+    pageSize: number
     follow: (userId: number) => void
     unfollow: (userId: number) => void
     onPageChanged: (pageNumber: number) => void
@@ -14,6 +15,7 @@ type UsersProps = {
 
 
 export const Users = (props:UsersProps) => {
+    debugger
     let state = props.usersPage
 
     let pagesCount = Math.ceil(state.totalUsersCount / state.pageSize)
@@ -35,7 +37,7 @@ export const Users = (props:UsersProps) => {
                 <span>
                     <div>
                         <NavLink to = {'/profile' + u.id}>
-                        <img src={u.photos.small != null ? u.photos.small : userPhoto} className={styles.userPhoto}/>
+                        <img alt={"photos-small"} src={u.photos.small != null ? u.photos.small : userPhoto} className={styles.userPhoto}/>
                     </NavLink>
                         </div>
                     <div>

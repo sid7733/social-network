@@ -19,18 +19,18 @@ export type UserLocationType = {
 
 export type InitialStateType = {
     users: Array<UserType>
-    pageSize: number
     totalUsersCount: number
     currentPage: number
+    pageSize: number
     isFetching: boolean
     followingInProgress: Array<number>
 }
 
 const initialState: InitialStateType = {
     users: [],
-    pageSize: 5,
     totalUsersCount: 0,
     currentPage: 1,
+    pageSize: 10,
     isFetching: true,
     followingInProgress: []
 }
@@ -101,7 +101,7 @@ const usersReducer = (state: InitialStateType= initialState, action: UsersAction
                 ...state,
                 followingInProgress: action.isFetching
                     ? [...state.followingInProgress, action.userId]
-                    : state.followingInProgress.filter(id => id != action.userId)
+                    : state.followingInProgress.filter(id => id !== action.userId)
             }
         default:
             return state
@@ -123,15 +123,18 @@ export const toggleFollowingProgress = (isFetching: boolean, userId: number) => 
 type ThunkType = ThunkAction<void, AppStateType, unknown, ActionType>
 type ThunkDispatchType = ThunkDispatch<AppStateType, unknown, ActionType>
 
-export const getUsers = (currentPage: number, pageSize: number): ThunkType => {
+export const getUsers = (pageNumber: number, pageSize: number): ThunkType => {
+    debugger
     return (dispatch: ThunkDispatchType) => {
             dispatch(toggleIsFetching(true))
 
-        usersAPI.getUsers(currentPage, pageSize)
+        usersAPI.getUsers(pageNumber, pageSize)
             .then(data => {
                 dispatch(toggleIsFetching(false))
                 dispatch(setUsers(data.items))
-                dispatch(setTotalUsersCount(data.totalUsersCount))
+                dispatch(setCurrentPage(pageNumber))
+                console.log(data)
+                dispatch(setTotalUsersCount(data.totalCount))
             })
     }
 }
@@ -141,7 +144,7 @@ export const follow = (userId: number): ThunkType => {
         dispatch(toggleFollowingProgress(true, userId))
         usersAPI.follow(userId)
             .then(response => {
-                if (response.data.resultCode == 0) {
+                if (response.data.resultCode === 0) {
                     dispatch(followSuccess(userId))
                 }
                 dispatch(toggleFollowingProgress(false, userId))
@@ -155,7 +158,7 @@ export const unfollow = (userId: number): ThunkType => {
         dispatch(toggleFollowingProgress(true, userId))
         usersAPI.unfollow(userId)
             .then(response => {
-                if (response.data.resultCode == 0) {
+                if (response.data.resultCode === 0) {
                     dispatch(unfollowSuccess(userId))
                 }
                 dispatch(toggleFollowingProgress(false, userId))

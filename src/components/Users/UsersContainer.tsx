@@ -13,8 +13,8 @@ import {Preloader} from "../common/preloader/Preloader";
 type MapStateToPropsType = {
     usersPage: InitialStateType
     users: Array<any>,
-    currentPage: number
     totalUsersCount: number
+    currentPage: number
     pageSize: number
     isFetching: boolean
 
@@ -24,7 +24,7 @@ type MapDispatchToPropsType = {
     unfollow: (userId: number) => void
     setCurrentPage: (pageNumber: number) => void
     toggleFollowingProgress:(isFetching: boolean, userId: number)=>void
-    getUsers: (currentPage: number, pageSize: number)=> void
+    getUsers: (pageNumber: number, pageSize: number)=> void
     //onPageChanged:(currentPage: number)=> void
 
 }
@@ -38,7 +38,8 @@ class UsersContainer extends React.Component<UsersPropsType> {
     }
 
     onPageChanged = (pageNumber: number) => {
-        this.props.getUsers(pageNumber, this.props.currentPage)
+        debugger
+        this.props.getUsers(pageNumber, this.props.pageSize)
     }
 
     render() {
@@ -50,6 +51,7 @@ class UsersContainer extends React.Component<UsersPropsType> {
             follow={this.props.follow}
             unfollow={this.props.unfollow}
             toggleFollowingProgress={this.props.toggleFollowingProgress}
+            pageSize={this.props.pageSize}
         />
     </>
     }

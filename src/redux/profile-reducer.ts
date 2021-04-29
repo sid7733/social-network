@@ -32,18 +32,16 @@ export type ProfileType={
     photos: PhotosType,
 }
 
-type ContactsType=Array <string>
-
-// {
-//     github: string,
-//     vk: string,
-//     facebook: string,
-//     instagram: string,
-//     twitter: string,
-//     website: string,
-//     youtube: string,
-//     mainLink: string,
-// }
+type ContactsType = {
+    github: string,
+    vk: string,
+    facebook: string,
+    instagram: string,
+    twitter: string,
+    website: string,
+    youtube: string,
+    mainLink: string,
+}
 
 type PhotosType={
     small:string,
@@ -100,7 +98,7 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileA
 
 export const addPost = () => ({ type: ADD_POST}) as const
 export const updateNewPostText = (text: string) => ({type: UPDATE_NEW_POST_TEXT, newText: text}) as const
-export const setUserProfile = (profile: ProfileType) => ({type: SET_USER_PROFILE, profile}) as const
+export const setUserProfile = (profile: ProfileType) => ({type: SET_USER_PROFILE, profile: profile}) as const
 
 export type ProfileActionType = ReturnType<typeof addPost> |
     ReturnType<typeof updateNewPostText> |
@@ -112,6 +110,7 @@ type ThunkDispatchType = ThunkDispatch<AppStateType, unknown, ActionType>
 export const getUserProfile = (userId: number): ThunkType => (dispatch: ThunkDispatchType )=> {
     usersAPI.getProfile(userId)
         .then(response => {
+
             dispatch(setUserProfile(response.data))
         })
 }

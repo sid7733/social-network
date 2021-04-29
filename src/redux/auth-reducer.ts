@@ -54,4 +54,5 @@ export const getAuthUserData = (): ThunkType=>(dispatch: ThunkDispatchType)=>{
 }
 
 
+
 export default authReducer
