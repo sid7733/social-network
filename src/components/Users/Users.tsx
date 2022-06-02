@@ -15,7 +15,6 @@ type UsersProps = {
 
 
 export const Users = (props:UsersProps) => {
-    debugger
     let state = props.usersPage
 
     let pagesCount = Math.ceil(state.totalUsersCount / state.pageSize)
