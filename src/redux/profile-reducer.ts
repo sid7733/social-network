@@ -1,12 +1,13 @@
-import {usersAPI} from "../api/api";
+import {profileAPI, usersAPI} from "../api/api";
 import {ThunkAction, ThunkDispatch} from "redux-thunk";
 import {ActionType, AppStateType} from "./redux-store";
+import ProfileInfo from "../components/Profile/ProfileInfo/ProfileInfo";
+
 
 const ADD_POST = 'ADD_POST';
 const UPDATE_NEW_POST_TEXT = 'UPDATE_NEW_POST_TEXT';
-const SET_USER_PROFILE='SET_USER_PROFILE'
-
-
+const SET_USER_PROFILE = 'SET_USER_PROFILE';
+const SET_STATUS = 'SET_STATUS'
 
 
 export type PostType = {
@@ -15,24 +16,35 @@ export type PostType = {
     likesCount: number
 }
 
-export type InitialStateType={
+export type InitialStateType = {
     posts: Array<PostType>,
     newPostText: string,
-    profile: ProfileType | null
+    profile: ProfileType | null,
+    status: string,
 }
 
 
-export type ProfileType={
-    userId: number,
-    status: string,
+export type ProfileType = {
+    userId: string,
     lookingForAJob: boolean,
-    lookingForAJobDescription: string
-    fullName: string
+    lookingForAJobDescription: string,
+    fullName: string,
     contacts: ContactsType,
     photos: PhotosType,
 }
 
-type ContactsType = {
+export type ProfileInfoPropsType = {
+    profile: ProfileType | null,
+    status: string,
+    updateStatus: (status: string) => void
+}
+
+// export type ProfileStatusType = {
+//     status: string,
+//     updateStatus: string
+// }
+
+export type ContactsType = {
     github: string,
     vk: string,
     facebook: string,
@@ -43,8 +55,8 @@ type ContactsType = {
     mainLink: string,
 }
 
-type PhotosType={
-    small:string,
+export type PhotosType = {
+    small: string,
     large: string
 }
 
@@ -57,7 +69,8 @@ const initialState = {
         {id: 5, message: 'It\'s my fourth post', likesCount: 3}
     ],
     newPostText: '',
-    profile: null
+    profile: null,
+    status: ""
 }
 
 // export type InitialStateType = typeof initialState
@@ -83,7 +96,16 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileA
                 newPostText: action.newText
             }
         }
-        case SET_USER_PROFILE:{
+
+        case SET_STATUS: {
+            return {
+                ...state,
+                status: action.status
+            }
+        }
+
+
+        case SET_USER_PROFILE: {
             return {
                 ...state,
                 profile: action.profile
@@ -96,18 +118,36 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileA
 }
 
 
-export const addPost = () => ({ type: ADD_POST}) as const
+export const addPost = () => ({type: ADD_POST}) as const
 export const updateNewPostText = (text: string) => ({type: UPDATE_NEW_POST_TEXT, newText: text}) as const
+export const setStatus = (status: string) => ({type: SET_STATUS, status: status}) as const
 export const setUserProfile = (profile: ProfileType) => ({type: SET_USER_PROFILE, profile: profile}) as const
 
 export type ProfileActionType = ReturnType<typeof addPost> |
     ReturnType<typeof updateNewPostText> |
-    ReturnType<typeof setUserProfile>
+    ReturnType<typeof setUserProfile> | ReturnType<typeof setStatus>
 
 type ThunkType = ThunkAction<void, AppStateType, unknown, ActionType>
 type ThunkDispatchType = ThunkDispatch<AppStateType, unknown, ActionType>
 
-export const getUserProfile = (userId: number): ThunkType => (dispatch: ThunkDispatchType )=> {
+export const getStatus = (userId: number): ThunkType => (dispatch: ThunkDispatchType) => {
+    profileAPI.getStatus(userId)
+        .then(response => {
+            dispatch(setStatus(response.data))
+        })
+}
+
+export const updateStatus = (status: string): ThunkType => (dispatch: ThunkDispatchType) => {
+    profileAPI.updateStatus(status)
+        .then(response => {
+            if (response.data.resultCode === 0) {
+                dispatch(setStatus(status))
+            }
+
+        })
+}
+
+export const getUserProfile = (userId: number): ThunkType => (dispatch: ThunkDispatchType) => {
     usersAPI.getProfile(userId)
         .then(response => {
 
